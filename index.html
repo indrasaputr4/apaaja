@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special For You</title>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            perspective: 1000px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* --- 1. LAYAR AWAL (KLIK) --- */
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            cursor: pointer;
+            transition: opacity 1s ease;
+        }
+        #overlay h1 { font-size: 20px; margin-bottom: 10px; }
+        #overlay p { font-size: 14px; color: #ccc; animation: blink 1.5s infinite; }
+
+        /* --- STYLE UNTUK KOTAK PESAN (Berlaku untuk Pesan 1 & 2) --- */
+        .message-box {
+            position: absolute;
+            z-index: 900;
+            background: rgba(255, 255, 255, 0.1); 
+            border: 2px solid #ea80b0;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            max-width: 80%;
+            width: 400px;
+            display: none; /* Sembunyi dulu */
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(234, 128, 176, 0.5);
+            animation: fadeIn 1s ease;
+        }
+
+        .message-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .next-btn {
+            background: #ea80b0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .next-btn:hover { transform: scale(1.1); background: #ff69b4; }
+
+        /* --- 3. ANIMASI HATI --- */
+        #heart-container {
+            position: relative;
+            width: 100vw; 
+            height: 100vh;
+            transform-style: preserve-3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: rotateHeart 15s infinite linear;
+            opacity: 0; 
+            transition: opacity 2s ease; 
+        }
+
+        .particle {
+            position: absolute;
+            font-weight: bold;
+            color: #ea80b0;
+            text-shadow: 0 0 10px #ea80b0;
+            white-space: nowrap;
+            transform-style: preserve-3d;
+            user-select: none; 
+        }
+
+        @media (max-width: 768px) {
+            .particle { font-size: 12px; }
+        }
+        @media (min-width: 769px) {
+            .particle { font-size: 16px; }
+        }
+
+        @keyframes rotateHeart {
+            0% { transform: rotateY(0deg) rotateX(10deg); }
+            100% { transform: rotateY(360deg) rotateX(10deg); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="music" src="lagu.mp3" loop></audio>
+
+    <div id="overlay">
+        <h1>Hai, ada pesan buat kamu...</h1>
+        <p>(Klik layar untuk membaca)</p>
+    </div>
+
+    <div id="msg1" class="message-box">
+        <p class="message-text">
+            Hai sayangkuu, kamu tau gak? <br><br>
+            Lagu ini yang ingin selalu aku nyanyiin buat kamu. <br>Artinya itu tentang seseorang yang ingin menjadi apapun yang kekasihnya butuhkan,<br>
+            seperti pada lirik,tolong dengerin ya...
+        </p>
+        <button id="btn1" class="next-btn">Lanjut ➡️</button>
+    </div>
+
+    <div id="msg2" class="message-box">
+        <p class="message-text">
+           bacanya pelan pelan ya sayangkuu<br><br> ouh iya maaf ya kalo aku sering kali berbuat salah ,maaf ya kalo aku suka bikin kamu stres sama tingkah ku,semoga kamu gak berpikir untuk ninggalin aku.<br> 
+            aku cuma bisa buat yang seperti ini untuk mu semoga kamu suka yaa,dan jangan sering badmood cintaakuu..
+        </p>
+        <button id="btn2" class="next-btn">Buka Hati ❤️</button>
+    </div>
+
+    <div id="heart-container"></div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const msg1 = document.getElementById('msg1');
+        const msg2 = document.getElementById('msg2');
+        const btn1 = document.getElementById('btn1');
+        const btn2 = document.getElementById('btn2');
+        const container = document.getElementById('heart-container');
+        const music = document.getElementById('music');
+        
+        // --- LOGIKA ALUR BARU ---
+        
+        // Klik Layar Awal -> Muncul Pesan 1
+        overlay.addEventListener('click', () => {
+            overlay.style.display = 'none'; 
+            msg1.style.display = 'flex'; 
+            music.play().catch(e => console.log(e)); 
+        });
+
+        // Klik Tombol Pesan 1 -> Muncul Pesan 2
+        btn1.addEventListener('click', () => {
+            msg1.style.display = 'none'; // Tutup pesan 1
+            msg2.style.display = 'flex'; // Buka pesan 2
+        });
+
+        // Klik Tombol Pesan 2 -> Muncul Hati
+        btn2.addEventListener('click', () => {
+            msg2.style.display = 'none'; // Tutup pesan 2
+            container.style.opacity = '1'; // Munculkan hati
+        });
+
+        // --- LOGIKA ANIMASI HATI ---
+        const totalParticles = 70; 
+        const speed = 0.003; 
+        let particles = [];
+        let currentScale = 12; 
+
+        function updateScale() {
+            const width = window.innerWidth;
+            if (width < 600) currentScale = 11; 
+            else if (width < 1024) currentScale = 15; 
+            else currentScale = 22; 
+        }
+        updateScale();
+        window.addEventListener('resize', updateScale);
+
+        for (let i = 0; i < totalParticles; i++) {
+            const el = document.createElement('div');
+            el.classList.add('particle');
+            
+            // --- GANTI TEKS HATI DI SINI ---
+            el.innerText = "I Love You"; 
+            
+            container.appendChild(el);
+            particles.push({
+                element: el,
+                offset: i * (Math.PI * 2 / totalParticles) 
+            });
+        }
+
+        function getHeartPosition(t) {
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+            return { x: x * currentScale, y: y * currentScale };
+        }
+
+        function animate() {
+            const time = Date.now() * speed;
+            particles.forEach(p => {
+                const t = time + p.offset;
+                const pos = getHeartPosition(t);
+                p.element.style.transform = `translate(${pos.x}px, ${pos.y}px) rotateZ(-30deg)`;
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
